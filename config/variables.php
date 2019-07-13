@@ -25,6 +25,12 @@ return [
         'height' => 400,
     ],
 
+    'reaction_type' => [
+        'positive'=>'positive',
+        'negative'=>'negative',
+        'neutral'=>'neutral'
+    ],
+
     /*
     |------------------------------------------------------------------------------------
     | ENV of APP

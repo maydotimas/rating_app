@@ -16,10 +16,10 @@ class users extends Seeder
         
         $data = [];
         
-        for ($i = 1; $i <= 1 ; $i++) {
+        for ($i = 1; $i <= 10 ; $i++) {
             array_push($data, [
-                'name'     => 'hadji kouceyla',
-                'email'    => 'test@example.com',
+                'name'     => $faker->name,
+                'email'    => $faker->email,
                 'password' => bcrypt('123456'),
                 'role'     => 10,
                 'bio'      => $faker->realText(),
