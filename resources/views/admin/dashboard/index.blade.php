@@ -234,11 +234,11 @@
                                     time: {
                                         parser: timeFormat,
                                         // round: 'day'
-                                        tooltipFormat: 'll HH:mm'
+                                        tooltipFormat: 'll'
                                     },
                                     scaleLabel: {
                                         display: true,
-                                        labelString: 'Date'
+                                        labelString: 'Month'
                                     }
                                 }],
                                 yAxes: [{
@@ -254,46 +254,7 @@
                     window.onload = function () {
                         var ctx = document.getElementById('canvas').getContext('2d');
                         window.myLine = new Chart(ctx, config);
-
                     };
-
-                    var colorNames = Object.keys(window.chartColors);
-                    document.getElementById('addDataset').addEventListener('click', function () {
-                        var colorName = colorNames[config.data.datasets.length % colorNames.length];
-                        var newColor = window.chartColors[colorName];
-                        var newDataset = {
-                            label: 'Dataset ' + config.data.datasets.length,
-                            borderColor: newColor,
-                            backgroundColor: color(newColor).alpha(0.5).rgbString(),
-                            data: [],
-                        };
-
-                        for (var index = 0; index < config.data.labels.length; ++index) {
-                            newDataset.data.push(randomScalingFactor());
-                        }
-
-                        config.data.datasets.push(newDataset);
-                        window.myLine.update();
-                    });
-
-                    document.getElementById('addData').addEventListener('click', function () {
-                        if (config.data.datasets.length > 0) {
-                            config.data.labels.push(newDate(config.data.labels.length));
-
-                            for (var index = 0; index < config.data.datasets.length; ++index) {
-                                if (typeof config.data.datasets[index].data[0] === 'object') {
-                                    config.data.datasets[index].data.push({
-                                        x: newDate(config.data.datasets[index].data.length),
-                                        y: randomScalingFactor(),
-                                    });
-                                } else {
-                                    config.data.datasets[index].data.push(randomScalingFactor());
-                                }
-                            }
-
-                            window.myLine.update();
-                        }
-                    });
 
                 </script>
             </div>

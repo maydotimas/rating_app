@@ -13,7 +13,8 @@ Route::group(['prefix' => ADMIN, 'as' => ADMIN . '.', 'middleware'=>['auth', 'Ro
     Route::get('/dashboard', 'DashboardController@index')->name('dash');
     Route::resource('users', 'UserController');
     Route::resource('reactions', 'ReactionsController');
-    Route::resource('user-reactions', 'UserReactionsController');
+    Route::get('user-reactions/daily', 'UserReactionsController@daily')->name('daily.reactions');
+    Route::get('user-reactions/monthly', 'UserReactionsController@monthly')->name('monthly.reactions');
 });
 
 Route::get('/', function () {

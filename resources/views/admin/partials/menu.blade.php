@@ -13,7 +13,7 @@
 </li>
 
 <li class="nav-item">
-    <a class="sidebar-link {{ starts_with($route, ADMIN . '.dash') ? 'active' : '' }}" href="{{ route(ADMIN . '.dash') }}">
+    <a class="sidebar-link {{ starts_with($route, ADMIN . '.daily') ? 'active' : '' }}" href="{{ route(ADMIN . '.daily.reactions') }}">
         <span class="icon-holder">
             <i class="c-teal-500 ti-shine"></i>
         </span>
@@ -21,7 +21,7 @@
     </a>
 </li>
 <li class="nav-item">
-    <a class="sidebar-link {{ starts_with($route, ADMIN . '.dash') ? 'active' : '' }}" href="{{ route(ADMIN . '.dash') }}">
+    <a class="sidebar-link {{ starts_with($route, ADMIN . '.monthly') ? 'active' : '' }}" href="{{ route(ADMIN . '.monthly.reactions') }}">
         <span class="icon-holder">
             <i class="c-amber-500 ti-calendar"></i>
         </span>
