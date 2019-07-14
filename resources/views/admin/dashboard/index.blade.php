@@ -97,7 +97,7 @@
             <!-- #Monthly Stats ==================== -->
             <div class="bd bgc-white">
                 <div class="layer w-100 p-20">
-                    <canvas id="canvas" height="220"></canvas>
+                    <canvas id="canvas" height="100"></canvas>
                 </div>
                 <div class="layer bdT p-20 w-100">
                     <div class="peers ai-c jc-c gapX-20">
@@ -119,6 +119,11 @@
                         </div>
                     </div>
                 </div>
+                <button id="randomizeData">Randomize Data</button>
+                <button id="addDataset">Add Dataset</button>
+                <button id="removeDataset">Remove Dataset</button>
+                <button id="addData">Add Data</button>
+                <button id="removeData">Remove Data</button>
                 <script>
                     // get data
                     var positive_data =
@@ -179,7 +184,7 @@
                                         positive_data[11],
                                         positive_data[12]
                                     ],
-                                },{
+                                }, {
                                     label: 'Neutral Reactions',
                                     backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
                                     borderColor: window.chartColors.blue,
@@ -206,7 +211,7 @@
                                     borderColor: window.chartColors.red,
                                     fill: false,
                                     data: [
-                                        negative_data[1],
+                                        randomScalingFactor(),
                                         negative_data[2],
                                         negative_data[3],
                                         negative_data[4],
@@ -256,11 +261,145 @@
                         window.myLine = new Chart(ctx, config);
                     };
 
+                    document.getElementById('randomizeData').addEventListener('click', function () {
+                        config.data.datasets.forEach(function (dataset) {
+                            dataset.data.forEach(function (dataObj, j) {
+                                if (typeof dataObj === 'object') {
+                                    dataObj.y = randomScalingFactor();
+                                } else {
+                                    dataset.data[j] = randomScalingFactor();
+                                }
+                            });
+                        });
+
+                        window.myLine.update();
+                    });
+
+                    var colorNames = Object.keys(window.chartColors);
+
+                    document.getElementById('addDataset').addEventListener('click', function () {
+                        var colorName = colorNames[config.data.datasets.length % colorNames.length];
+                        var newColor = window.chartColors[colorName];
+                        var newDataset = {
+                            label: 'Dataset ' + config.data.datasets.length,
+                            borderColor: newColor,
+                            backgroundColor: color(newColor).alpha(0.5).rgbString(),
+                            data: [],
+                        };
+
+
+                        for (var index = 0; index < config.data.labels.length; ++index) {
+                            newDataset.data.push(randomScalingFactor());
+                        }
+
+                        config.data.datasets.push(newDataset);
+                        window.myLine.update();
+                    });
+
+                    document.getElementById('addData').addEventListener('click', function () {
+                        if (config.data.datasets.length > 0) {
+                            config.data.labels.push(newDate(config.data.labels.length));
+
+                            for (var index = 0; index < config.data.datasets.length; ++index) {
+                                if (typeof config.data.datasets[index].data[0] === 'object') {
+                                    config.data.datasets[index].data.push({
+                                        x: newDate(config.data.datasets[index].data.length),
+                                        y: randomScalingFactor(),
+                                    });
+                                } else {
+                                    config.data.datasets[index].data.push(randomScalingFactor());
+                                }
+                            }
+
+                            window.myLine.update();
+                        }
+                    });
+
+                    document.getElementById('removeDataset').addEventListener('click', function () {
+                        config.data.datasets.splice(0, 1);
+                        window.myLine.update();
+                    });
+
+                    document.getElementById('removeData').addEventListener('click', function () {
+                        config.data.labels.splice(-1, 1); // remove the label first
+
+                        config.data.datasets.forEach(function (dataset) {
+                            dataset.data.pop();
+                        });
+
+                        window.myLine.update();
+                    });
+
                 </script>
             </div>
 
         </div>
+        <div class="masonry-item col-md-12">
+            <!-- #Reactions Report ==================== -->
+            <div class="bd bgc-white">
+                <div class="layers">
+                    <div class="layer w-100 p-20">
+                        <h6 class="lh-1">Monthly Stats</h6>
+                    </div>
+                    <div class="layer w-100">
+                        <div class="bgc-light-blue-500 c-white p-20">
+                            <div class="peers ai-c jc-sb gap-40">
+                                <div class="peer peer-greed">
+                                    <h5>January - December {{date('Y')}}</h5>
+                                    <p class="mB-0">Reactions Report</p>
+                                </div>
+                                <div class="peer">
+                                    <h3 class="text-right">{{$data['total']}} <small class="c-white">reactions</small></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive p-10">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class=" bdwT-0">Month</th>
+                                    <th class=" bdwT-0">Positive</th>
+                                    <th class=" bdwT-0">Neutral</th>
+                                    <th class=" bdwT-0">Negative</th>
+                                    <th class=" bdwT-0">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @for($month=1;$month<=12;$month++)
+                                    <tr>
+                                        <td class="fw-600">{{date_format(date_create("2019-".$month."-01"),"F")}}</td>
+                                        @if(isset($positive_monthly_data[$month]))
+                                            <td>{{$positive_monthly_data[$month]}}</td>
+                                        @else
+                                            <td>0</td>
+                                        @endif
+
+                                        @if(isset($neutral_monthly_data[$month]))
+                                            <td>{{$neutral_monthly_data[$month]}}</td>
+                                        @else
+                                            <td>0</td>
+                                        @endif
+
+                                        @if(isset($negative_monthly_data[$month]))
+                                            <td>{{$negative_monthly_data[$month]}}</td>
+                                        @else
+                                            <td>0</td>
+                                        @endif
+
+                                        <td><button type="button" class="btn btn-success btn-sm">VIEW DETAILS</button></td>
+                                    </tr>
+
+                                @endfor
 
 
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+
+    </div>
 @endsection
