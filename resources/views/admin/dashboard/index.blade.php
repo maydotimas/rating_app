@@ -99,31 +99,7 @@
                 <div class="layer w-100 p-20">
                     <canvas id="canvas" height="100"></canvas>
                 </div>
-                <div class="layer bdT p-20 w-100">
-                    <div class="peers ai-c jc-c gapX-20">
-                        <div class="peer">
-                            <span class="fsz-def fw-600 mR-10 c-grey-800">10% <i class="fa fa-level-up c-green-500"></i></span>
-                            <small class="c-grey-500 fw-600">APPL</small>
-                        </div>
-                        <div class="peer fw-600">
-                            <span class="fsz-def fw-600 mR-10 c-grey-800">2% <i class="fa fa-level-down c-red-500"></i></span>
-                            <small class="c-grey-500 fw-600">Average</small>
-                        </div>
-                        <div class="peer fw-600">
-                            <span class="fsz-def fw-600 mR-10 c-grey-800">15% <i class="fa fa-level-up c-green-500"></i></span>
-                            <small class="c-grey-500 fw-600">Sales</small>
-                        </div>
-                        <div class="peer fw-600">
-                            <span class="fsz-def fw-600 mR-10 c-grey-800">8% <i class="fa fa-level-down c-red-500"></i></span>
-                            <small class="c-grey-500 fw-600">Profit</small>
-                        </div>
-                    </div>
-                </div>
-                <button id="randomizeData">Randomize Data</button>
-                <button id="addDataset">Add Dataset</button>
-                <button id="removeDataset">Remove Dataset</button>
-                <button id="addData">Add Data</button>
-                <button id="removeData">Remove Data</button>
+
                 <script>
                     // get data
                     var positive_data =
@@ -261,75 +237,6 @@
                         window.myLine = new Chart(ctx, config);
                     };
 
-                    document.getElementById('randomizeData').addEventListener('click', function () {
-                        config.data.datasets.forEach(function (dataset) {
-                            dataset.data.forEach(function (dataObj, j) {
-                                if (typeof dataObj === 'object') {
-                                    dataObj.y = randomScalingFactor();
-                                } else {
-                                    dataset.data[j] = randomScalingFactor();
-                                }
-                            });
-                        });
-
-                        window.myLine.update();
-                    });
-
-                    var colorNames = Object.keys(window.chartColors);
-
-                    document.getElementById('addDataset').addEventListener('click', function () {
-                        var colorName = colorNames[config.data.datasets.length % colorNames.length];
-                        var newColor = window.chartColors[colorName];
-                        var newDataset = {
-                            label: 'Dataset ' + config.data.datasets.length,
-                            borderColor: newColor,
-                            backgroundColor: color(newColor).alpha(0.5).rgbString(),
-                            data: [],
-                        };
-
-
-                        for (var index = 0; index < config.data.labels.length; ++index) {
-                            newDataset.data.push(randomScalingFactor());
-                        }
-
-                        config.data.datasets.push(newDataset);
-                        window.myLine.update();
-                    });
-
-                    document.getElementById('addData').addEventListener('click', function () {
-                        if (config.data.datasets.length > 0) {
-                            config.data.labels.push(newDate(config.data.labels.length));
-
-                            for (var index = 0; index < config.data.datasets.length; ++index) {
-                                if (typeof config.data.datasets[index].data[0] === 'object') {
-                                    config.data.datasets[index].data.push({
-                                        x: newDate(config.data.datasets[index].data.length),
-                                        y: randomScalingFactor(),
-                                    });
-                                } else {
-                                    config.data.datasets[index].data.push(randomScalingFactor());
-                                }
-                            }
-
-                            window.myLine.update();
-                        }
-                    });
-
-                    document.getElementById('removeDataset').addEventListener('click', function () {
-                        config.data.datasets.splice(0, 1);
-                        window.myLine.update();
-                    });
-
-                    document.getElementById('removeData').addEventListener('click', function () {
-                        config.data.labels.splice(-1, 1); // remove the label first
-
-                        config.data.datasets.forEach(function (dataset) {
-                            dataset.data.pop();
-                        });
-
-                        window.myLine.update();
-                    });
-
                 </script>
             </div>
 
@@ -354,7 +261,7 @@
                             </div>
                         </div>
                         <div class="table-responsive p-10">
-                            <table class="table table-striped">
+                            <table class="table table-striped text-center">
                                 <thead>
                                 <tr>
                                     <th class=" bdwT-0">Month</th>
@@ -367,7 +274,7 @@
                                 <tbody>
                                 @for($month=1;$month<=12;$month++)
                                     <tr>
-                                        <td class="fw-600">{{date_format(date_create("2019-".$month."-01"),"F")}}</td>
+                                        <td class="fw-600">{{date_format(date_create("2019-".$month."-01"),"F Y")}}</td>
                                         @if(isset($positive_monthly_data[$month]))
                                             <td>{{$positive_monthly_data[$month]}}</td>
                                         @else
@@ -390,11 +297,26 @@
                                     </tr>
 
                                 @endfor
+                                <tr>
+                                    <th>Total</th>
+                                    <td>{{array_sum($positive_monthly_data)}} </td>
+                                    <td>{{array_sum($neutral_monthly_data)}}</td>
+                                    <td>{{array_sum($negative_monthly_data)}}</td>
+                                    <td>&nbsp</td>
+                                </tr>
+                                <tr>
+                                    <th>Percentage</th>
+                                    <td>{{number_format(array_sum($positive_monthly_data)/$data['total']*100,2)}}% </td>
+                                    <td>{{number_format(array_sum($neutral_monthly_data)/$data['total']*100,2)}}%</td>
+                                    <td>{{number_format(array_sum($negative_monthly_data)/$data['total']*100,2)}}%</td>
+                                    <td>&nbsp</td>
+                                </tr>
 
 
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
